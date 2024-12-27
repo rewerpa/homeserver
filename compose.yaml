@@ -10,16 +10,30 @@ services:
       - DOZZLE_ENABLE_ACTIONS=true
   nginx:
     container_name: nginx
-#    image: nginx # default image does not have the required dav ext module
-    build:
-      dockerfile: ./nginx.Dockerfile
+    image: nginx 
     ports:
-      - "4430:443"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs/ca/ca.crt:/etc/nginx/certs/ca/ca.crt:ro
       - ./certs/server:/etc/nginx/certs/server:ro
-      - webdav_data:/var/www/html/dav/
+    restart: unless-stopped
+  wsgidav:
+    container_name: wsgidav
+    # image: mar10/wsgidav # no arm build for now
+    build:
+      dockerfile: ./wsgidav.Dockerfile
+    command:
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "80"
+      - "--root"
+      - "/var/wsgidav-root"
+      - "--auth=anonymous"
+      - "--no-config"
+    volumes:
+      - webdav_data:/var/wsgidav-root/dav
     restart: unless-stopped
 
 volumes:
