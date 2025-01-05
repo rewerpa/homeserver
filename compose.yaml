@@ -10,30 +10,16 @@ services:
       - DOZZLE_ENABLE_ACTIONS=true
   nginx:
     container_name: nginx
-    image: nginx 
+    # image: nginx 
+    build:
+      dockerfile: ./nginx.Dockerfile
     ports:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs/ca/ca.crt:/etc/nginx/certs/ca/ca.crt:ro
       - ./certs/server:/etc/nginx/certs/server:ro
-    restart: unless-stopped
-  wsgidav:
-    container_name: wsgidav
-    # image: mar10/wsgidav # no arm build for now
-    build:
-      dockerfile: ./wsgidav.Dockerfile
-    command:
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "80"
-      - "--root"
-      - "/var/wsgidav-root"
-      - "--auth=anonymous"
-      - "--no-config"
-    volumes:
-      - webdav_data:/var/wsgidav-root/dav
+      - webdav_data:/var/www/html/dav/
     restart: unless-stopped
   pihole:
     container_name: pihole
@@ -45,11 +31,15 @@ services:
     environment:
       WEBPASSWORD: '123456'
     volumes:
-      -  pihole_conf:/etc/pihole'
+      - pihole_conf:/etc/pihole'
+      - pihole_dnsmasq:/etc/dnsmasq.d
     restart: unless-stopped
 volumes:
   webdav_data:
     driver: local
 
   pihole_conf:
+    driver: local
+
+  pihole_dnsmasq:
     driver: local
