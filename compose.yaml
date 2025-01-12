@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
   httpd:
     container_name: httpd
-    image: httpd:alpine
+    image: httpd
     ports:
       - "443:443"
     volumes:
