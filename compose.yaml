@@ -30,7 +30,7 @@ services:
     environment:
       WEBPASSWORD: '123456'
     volumes:
-      - pihole_conf:/etc/pihole'
+      - pihole_conf:/etc/pihole
       - pihole_dnsmasq:/etc/dnsmasq.d
     restart: unless-stopped
 volumes:
